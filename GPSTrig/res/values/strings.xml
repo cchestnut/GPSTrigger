@@ -4,4 +4,9 @@
     <string name="app_name">GPStrigger</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="mapLabel">(No Location yet set)</string>
+    <string name="mapButt">Set Location</string>
+    <string name="startButt">ACTIVATE</string>
+    <string name="trigLabel">(No Trigger yet set)</string>
+    <string name="trigButt">Configure Trigger</string>
 </resources>
