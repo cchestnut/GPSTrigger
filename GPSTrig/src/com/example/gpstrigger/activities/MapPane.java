@@ -1,11 +1,14 @@
 package com.example.gpstrigger.activities;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
+import com.example.gpstrigger.Constants;
 import com.example.gpstrigger.R;
 import com.example.gpstrigger.R.id;
 import com.example.gpstrigger.R.layout;
 import com.example.gpstrigger.gmap.GPSTracker;
+import com.example.gpstrigger.gmap.AddressDialog.EditNameDialogListener;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.GoogleMap.OnMapClickListener;
 import com.google.android.gms.maps.model.*;
@@ -20,8 +23,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-//import android.widget.Toast;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.widget.Toast;
+
 
 public class MapPane extends Activity implements OnClickListener, OnMapClickListener{
 	
@@ -48,52 +53,67 @@ public class MapPane extends Activity implements OnClickListener, OnMapClickList
         
         //Home set to your location on default
         gps = new GPSTracker(MapPane.this);
-        gc = new Geocoder(this);
+        gc = new Geocoder(this.getApplicationContext());
         if(gps.isGPSEnabled() && gps.canGetLocation()){
         	loc = gps.getLocation();
         	home = new LatLng(loc.getLatitude(), loc.getLongitude());
+        	try{
+        		ArrayList<Address> al = 
+        			(ArrayList<Address>) gc.getFromLocation(loc.getLatitude(), loc.getLongitude(), 1);
+        		//if(!al.isEmpty())
+        		//mo = home;
+        		uAddress = al.get(0).getAddressLine(0);	
+        	} catch (IOException e){
+        		e.printStackTrace();
+        	} catch (IndexOutOfBoundsException e){
+        		e.printStackTrace();
+        	}
+        	home = new LatLng(loc.getLatitude(), loc.getLongitude());
         }
         map.setMyLocationEnabled(true);
-        if (home != null) {
-        	map.moveCamera(CameraUpdateFactory.newLatLngZoom(home, 13));
-        } else {
-        	//map.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 13));
-        }
+        plot(home);
+    	getUserAddress();     
         
-        //if not, remove marker and allow user to manually place
-        
-        //if correct, request radius information
-        //int radius = grabRadiusInfo();
-        //run ConfingureTriggerableActivity
-        
-        
-        //startActivity(intent);
-        
+    }
+    private void plot(Location l){
+    	plot(new LatLng(l.getLatitude(), l.getLongitude()));    	
+    }
+    private void plot(String c){
+        plot(processAdd(c));
+    }
+    private void plot(LatLng ll){
+    	if(ll == null){
+    		ll = home;
+    	}
+    	
+    	if(map != null && ll != null){
+    		map.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 17.0f));
+    	}
+    	map.clear();
+		mo = new MarkerOptions()
+		 .title("Trigger Location")
+		 .position(ll);
+		map.addMarker(mo);
     }
     protected void onStart(){
     	//Should prompt user to enter address/town,city or cancel to manually set marker
-    	super.onStart();
-        uAddress = getUserAddress();
-        //take address as string? and convert to latlng
-        LatLng spot = processAdd(uAddress);
-        //move camera to spot
-        if(spot != null){
-        	map.moveCamera(CameraUpdateFactory.newLatLngZoom(spot, 13));
-        }
-        //if given address, place marker and ask if correct?
-
-		mo = new MarkerOptions()
-       	 .title("Trigger Location")
-       	 .position(spot);
-       	map.addMarker(mo);
-        promptUserCheck();
+    	super.onStart();     
         
     }
     
-    
-    private int grabRadiusInfo(){
-    	int num = 1;
-    	return num;
+    protected void onActivityResult(int reqCode, int resCode, Intent data){
+    	if(resCode != this.RESULT_OK)
+    		return;
+    	//Toast t;
+    	//t = Toast.makeText(this.getApplicationContext(), "help--------", Toast.LENGTH_LONG);
+    	if(reqCode == Constants.addressRequestCode){
+    		Bundle b = data.getExtras();
+    		if(b != null){
+    			uAddress = b.getString("address");
+    			plot(uAddress);
+    			promptUserCheck();
+    		}
+    	}
     }
     
     private boolean promptUserCheck(){
@@ -136,25 +156,31 @@ public class MapPane extends Activity implements OnClickListener, OnMapClickList
     
     protected void onPause(){
     	super.onPause();
-    	alert.dismiss();
+    	//alert.dismiss();
     }
     
     private LatLng processAdd(String s){
     	LatLng res=null;
     	String locString = s;
     	try{
-    		Address ad = (gc.getFromLocationName(locString, 1)).get(0);
-    		res = new LatLng(ad.getLatitude(),ad.getLongitude());
+    		ArrayList<Address> ls = (ArrayList<Address>) gc.getFromLocationName(locString, 1);
+    		if(!ls.isEmpty()){
+    			Address ad = ls.get(0);
+    			res = new LatLng(ad.getLatitude(),ad.getLongitude());
+    		}
     	}catch(IOException e){
+    		e.printStackTrace();
+    	} catch (NullPointerException e){
+    		e.printStackTrace();
+    	} catch (IndexOutOfBoundsException e){
     		e.printStackTrace();
     	}
     	return res;
     }
     
-    private String getUserAddress(){
-    	String res ="683 Colts Neck Rd, Freehold, NJ";
-    	
-    	return res;
+    private void getUserAddress(){
+    	Intent intent = new Intent(this, AddressLauncher.class);
+    	this.startActivityForResult(intent, Constants.addressRequestCode);
     }
     
     public void onMapClick(LatLng point) {
@@ -165,12 +191,11 @@ public class MapPane extends Activity implements OnClickListener, OnMapClickList
 				 .position(point);
 				map.addMarker(mo);
 				try{
-	    		uAddress = gc.getFromLocation(point.latitude, point.longitude, 1).get(0).getAddressLine(0);
+					uAddress = gc.getFromLocation(point.latitude, point.longitude, 1).get(0).getAddressLine(0);
 				}catch(IOException e){
 					e.printStackTrace();
 				}
 				promptUserCheck();
 			}
-		}
-    
+		}    
 }

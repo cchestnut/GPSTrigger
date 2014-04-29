@@ -11,6 +11,7 @@ import com.example.gpstrigger.R;
 import com.example.gpstrigger.R.id;
 import com.example.gpstrigger.R.layout;
 import com.example.gpstrigger.proxservice.ProximityIntentReceiver;
+import com.google.android.gms.maps.model.LatLng;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -40,22 +41,19 @@ public class ProxAlertActivity extends Activity {
     private static final String POINT_LONGITUDE_KEY = "POINT_LONGITUDE_KEY";
     
     private static final String PROX_ALERT_INTENT = 
-         "com.javacodegeeks.android.lbs.ProximityAlert";
+         "com.example.gpstrigger.proxservice.ProximityIntentReceiver";
     
     private static final NumberFormat nf = new DecimalFormat("##.########");
     
     private LocationManager locationManager;
-    
-    private EditText latitudeEditText;
-    private EditText longitudeEditText;
-    private Button findCoordinatesButton;
-    private Button savePointButton;
+    //int rad;
+    Bundle bhold;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.proxlayout);
+        //setContentView(R.layout.proxlayout);
         
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -64,27 +62,16 @@ public class ProxAlertActivity extends Activity {
                         MINIMUM_TIME_BETWEEN_UPDATE, 
                         MINIMUM_DISTANCECHANGE_FOR_UPDATE,
                         new MyLocationListener()
-        );
-        
-        latitudeEditText = (EditText) findViewById(R.id.point_latitude);
-        longitudeEditText = (EditText) findViewById(R.id.point_longitude);
-        findCoordinatesButton = (Button) findViewById(R.id.find_coordinates_button);
-        savePointButton = (Button) findViewById(R.id.save_point_button);
-        
-        findCoordinatesButton.setOnClickListener(new OnClickListener() {            
-            @Override
-            public void onClick(View v) {
-                populateCoordinatesFromLastKnownLocation();
-            }
-        });
-        
-        savePointButton.setOnClickListener(new OnClickListener() {            
-            @Override
-            public void onClick(View v) {
-                saveProximityAlertPoint();
-            }
-        });
-       
+        );    
+        bhold = getIntent().getExtras();       
+    }
+    
+    public void onStart(){
+    	super.onStart();
+    	if (bhold != null){
+    		LatLng loc = (LatLng) bhold.getParcelable("trigLoc");
+    		addProximityAlert(loc.latitude,loc.longitude);    		
+    	}
     }
     
     private void saveProximityAlertPoint() {
@@ -103,12 +90,14 @@ public class ProxAlertActivity extends Activity {
     private void addProximityAlert(double latitude, double longitude) {
         
         Intent intent = new Intent(PROX_ALERT_INTENT);
+        intent.putExtras(bhold);
+        int radius = bhold.getInt("radius");
         PendingIntent proximityIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
         
         locationManager.addProximityAlert(
             latitude, // the latitude of the central point of the alert region
             longitude, // the longitude of the central point of the alert region
-            POINT_RADIUS, // the radius of the central point of the alert region, in meters
+            radius, // the radius of the central point of the alert region, in meters
             PROX_ALERT_EXPIRATION, // time for this proximity alert, in milliseconds, or -1 to indicate no expiration 
             proximityIntent // will be used to generate an Intent to fire when entry to or exit from the alert region is detected
        );
@@ -118,14 +107,6 @@ public class ProxAlertActivity extends Activity {
        
     }
 
-    private void populateCoordinatesFromLastKnownLocation() {
-        Location location = 
-            locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        if (location!=null) {
-            latitudeEditText.setText(nf.format(location.getLatitude()));
-            longitudeEditText.setText(nf.format(location.getLongitude()));
-        }
-    }
     
     private void saveCoordinatesInPreferences(float latitude, float longitude) {
         SharedPreferences prefs = 
@@ -151,8 +132,8 @@ public class ProxAlertActivity extends Activity {
         public void onLocationChanged(Location location) {
             Location pointLocation = retrievelocationFromPreferences();
             float distance = location.distanceTo(pointLocation);
-            Toast.makeText(ProxAlertActivity.this, 
-                    "Distance from Point:"+distance, Toast.LENGTH_LONG).show();
+            //Toast.makeText(ProxAlertActivity.this, 
+              //      "Distance from Point:"+distance, Toast.LENGTH_LONG).show();
         }
         public void onStatusChanged(String s, int i, Bundle b) {            
         }

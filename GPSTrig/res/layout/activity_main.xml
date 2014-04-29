@@ -18,17 +18,18 @@
         <TextView 
             android:id="@+id/mapStatus"
         	android:text="@string/mapLabel"
+	        	android:textStyle="italic"
         	android:layout_width="wrap_content"
         	android:layout_height="wrap_content"
         />
         <Button
             android:id="@+id/mapButton"
         	android:text="@string/mapButt"
-        	android:layout_width="wrap_content" 
+        	android:layout_width="fill_parent" 
         	android:layout_height="wrap_content"
         />
         <LinearLayout 
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
         	android:layout_height="wrap_content"
         	android:orientation="horizontal"
         	android:layout_marginTop="60dp">
@@ -42,18 +43,20 @@
             <Button 
                 android:id="@+id/moreRadButton"
                 android:text="+"
+                android:textSize="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
             />
             <Button 
                 android:id="@+id/lessRadButton"
                 android:text="-"
+                android:textSize="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
             />"
         </LinearLayout>
          <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
@@ -61,6 +64,7 @@
 	        <TextView 
 	            android:id="@+id/trigStatus"
 	        	android:text="@string/trigLabel"
+	        	android:textStyle="italic"
 	        	android:layout_width="wrap_content"
 	        	android:layout_height="wrap_content"
 	        />

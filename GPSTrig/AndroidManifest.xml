@@ -17,18 +17,22 @@
         <activity android:name="com.example.gpstrigger.activities.TextHandlingActivity"/>
         <!--created by Chestnut at 2014-04-15 15:47:11-->
         <!-- activity android:name=".ProxAlertActivity"/-->
-        <activity 
-            android:name="com.example.gpstrigger.activities.MapPane"
-            android:parentActivityName="com.example.gpstrigger.activities.MainActivity" >
-        	<!-- Parent activity meta-data to support 4.0 and lower -->
-        	<meta-data
-            	android:name="android.support.PARENT_ACTIVITY"
-            	android:value="com.example.gpstrigger.activities.MainActivity"
-            	 />
-            </activity>
-        <!--activity android:name=".ProxAlertActivity"/-->
-        
-        
+        <activity
+            android:name="com.example.gpstrigger.activities.MapPane" android:parentActivityName="com.example.gpstrigger.activities.MainActivity">
+            <!--   Parent activity meta-data to support 4.0 and lower-->
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.gpstrigger.activities.MainActivity"/>
+        </activity>
+        <!--  created by Chestnut at 2014-04-18 13:42:29-->
+        <activity
+            android:name="com.example.gpstrigger.activities.AddressLauncher" android:parentActivityName="com.example.gpstrigger.activities.MapPane">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.gpstrigger.activities.MapPane"/>
+        </activity>
+        <!-- created by Chestnut at 2014-04-22 16:29:08-->
+        <activity
+            android:name="com.example.gpstrigger.triggerables.TextTrigger" android:parentActivityName="com.example.gpstrigger.activities.MainActivity">
+            <meta-data android:name="android.support.PARENT_ACTIVITY" android:value="com.example.gpstrigger.activities.MainActivity"/>
+        </activity>
+        <activity android:name="com.example.gpstrigger.activities.ProxAlertActivity"/>
         <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version"/>
         <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBTWmPbGcJbX6b8P0OXIWPAWUFlU5QyugI"/>
     </application>
