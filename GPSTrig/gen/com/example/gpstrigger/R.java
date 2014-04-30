@@ -1167,11 +1167,12 @@ containing a value of this type.
         public static final int common_signin_btn_text_normal_light=0x7f02006c;
         public static final int common_signin_btn_text_pressed_dark=0x7f02006d;
         public static final int common_signin_btn_text_pressed_light=0x7f02006e;
-        public static final int ic_launcher=0x7f02006f;
-        public static final int ic_plusone_medium_off_client=0x7f020070;
-        public static final int ic_plusone_small_off_client=0x7f020071;
-        public static final int ic_plusone_standard_off_client=0x7f020072;
-        public static final int ic_plusone_tall_off_client=0x7f020073;
+        public static final int earth_back=0x7f02006f;
+        public static final int ic_launcher=0x7f020070;
+        public static final int ic_plusone_medium_off_client=0x7f020071;
+        public static final int ic_plusone_small_off_client=0x7f020072;
+        public static final int ic_plusone_standard_off_client=0x7f020073;
+        public static final int ic_plusone_tall_off_client=0x7f020074;
     }
     public static final class id {
         public static final int actButton=0x7f06004c;

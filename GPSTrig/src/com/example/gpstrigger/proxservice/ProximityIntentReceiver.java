@@ -30,15 +30,16 @@ public class ProximityIntentReceiver extends BroadcastReceiver {
         
         if (entering) {
             Log.d(getClass().getSimpleName(), "entering");
+            Bundle b = intent.getExtras();
+            if(b.getInt("trigCount") > 0){
+            	executeTrigEvents(b);
+            }
         }
         else {
             Log.d(getClass().getSimpleName(), "exiting");
         }
       //execute all triggerables
-        Bundle b = intent.getExtras();
-        if(b.getInt("trigCount") > 0){
-        	executeTrigEvents(b);
-        }
+        
         NotificationManager notificationManager = 
             (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         
